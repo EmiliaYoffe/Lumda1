@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>הקרב המשולב והמשותף: מסע המפקד</title>
+    <style>
+        :root {
+            --bg-color: #f4f6f5;
+            --army-green: #5c6c51;
+            --army-dark: #3a4533;
+            --accent-orange: #e69d45;
+            --panel-bg: #e2e6e3;
+            --text-dark: #2c3e50;
+            --white: #ffffff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: var(--text-dark);
+        }
+
+        .tablet-container {
+            width: 1024px;
+            height: 768px;
+            background-color: var(--white);
+            border: 16px solid #333;
+            border-radius: 24px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Screen Management */
+        .screen {
+            display: none;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            animation: fadeIn 0.5s ease-in-out;
+            background-color: var(--bg-color);
+        }
+        .screen.active { display: flex; flex-direction: column; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Headers */
+        .header-bar {
+            background-color: var(--panel-bg);
+            padding: 15px 30px;
+            border-bottom: 3px solid var(--army-green);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header-bar h1 { margin: 0; font-size: 24px; color: var(--army-dark); }
+        .header-bar .pedagogy { font-size: 14px; color: #555; background: #fff; padding: 5px 10px; border-radius: 4px;}
+
+        /* Common Elements */
+        .btn {
+            background-color: var(--accent-orange);
+            color: #fff;
+            border: none;
+            padding: 12px 24px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s;
+        }
+        .btn:hover { transform: scale(1.05); background-color: #d68930; }
+        .btn:disabled { background-color: #ccc; cursor: not-allowed; transform: none; }
+
+        /* --- SCREEN 1: Home --- */
+        #screen1 {
+            background-image: url('bg-map.jpg');
+            background-size: cover;
+            background-position: center;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        .title-box {
+            background: rgba(255,255,255,0.9);
+            padding: 40px;
+            border-radius: 12px;
+            border: 2px solid var(--army-green);
+        }
+        .title-box h1 { font-size: 42px; color: var(--army-dark); margin-bottom: 10px; }
+        .title-box h2 { font-size: 20px; font-weight: normal; margin-bottom: 30px; }
+
+        /* --- SCREEN 2: Drag & Drop (Part 1) --- */
+        .dnd-container {
+            display: flex;
+            flex-direction: column;
+            padding: 30px;
+            height: 100%;
+        }
+        .drop-zones {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        .drop-zone {
+            flex: 1;
+            background: var(--white);
+            border: 2px dashed var(--army-green);
+            border-radius: 12px;
+            padding: 20px;
+            min-height: 250px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .drop-zone h3 { margin-top: 0; color: var(--army-dark); border-bottom: 2px solid var(--accent-orange); padding-bottom: 10px; }
+        .draggable-items {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            background: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #ddd;
+        }
+        .drag-item {
+            width: 100px;
+            height: 100px;
+            background: var(--panel-bg);
+            border: 2px solid var(--army-green);
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: grab;
+            font-weight: bold;
+        }
+        .drag-item.correct { background: #d4edda; border-color: #28a745; cursor: default; }
+
+        /* --- SCREEN 3: Cards (Part 2) --- */
+        .cards-container {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            padding: 30px;
+        }
+        .card {
+            width: 300px;
+            background: #fff;
+            border: 3px solid var(--army-dark);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .card h3 { text-align: center; font-size: 24px; margin-top: 0; }
+        .stat { margin-bottom: 15px; }
+        .stat-label { display: flex; justify-content: space-between; margin-bottom: 5px; font-weight: bold; font-size: 14px;}
+        .stat-bar { height: 10px; background: #eee; border-radius: 5px; overflow: hidden; }
+        .stat-fill { height: 100%; background: var(--accent-orange); }
+        .dilemma-box {
+            margin: 0 30px;
+            background: var(--army-dark);
+            color: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        .dilemma-options { display: flex; justify-content: center; gap: 20px; margin-top: 15px; }
+
+        /* --- SCREEN 4: Dashboard (Part 3) --- */
+        .dashboard-container {
+            display: flex;
+            height: 100%;
+            background-image: url('dashboard.jpg');
+            background-size: cover;
+            position: relative;
+        }
+        .side-menu {
+            width: 150px;
+            background: rgba(44, 62, 80, 0.9);
+            padding: 20px 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .dash-btn {
+            background: transparent;
+            border: 2px solid var(--accent-orange);
+            color: #fff;
+            padding: 15px 5px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        .dash-btn:hover { background: var(--accent-orange); }
+        .map-event {
+            position: absolute;
+            top: 40%; left: 40%;
+            background: rgba(255,255,255,0.95);
+            padding: 20px;
+            border: 3px solid #e74c3c;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            text-align: center;
+            display: none;
+        }
+
+        /* --- SCREEN 5: Friction (Part 5) --- */
+        .friction-container {
+            display: flex;
+            padding: 30px;
+            gap: 30px;
+            height: 100%;
+        }
+        .friction-img {
+            flex: 1;
+            background: #fff;
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 2px solid #ccc;
+            overflow: hidden;
+        }
+        .friction-img img { max-width: 100%; max-height: 400px; }
+        .friction-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 20px;
+        }
+        
+        .feedback-overlay {
+            display: none;
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+        .feedback-box {
+            background: #fff;
+            padding: 40px;
+            border-radius: 12px;
+            text-align: center;
+            max-width: 500px;
+            border-top: 10px solid var(--army-green);
+        }
+        
+    </style>
+</head>
+<body>
+
+<div class="tablet-container">
+
+    <!-- Screen 1: Landing -->
+    <div id="screen1" class="screen active">
+        <div class="title-box">
+            <h1>הקרב המשולב והמשותף</h1>
+            <h2>מסע המפקד הקרבי - מאבסטרקטיות לפרקטיקה</h2>
+            <button class="btn" onclick="nextScreen(2)">התחל משימה</button>
+        </div>
+    </div>
+
+    <!-- Screen 2: Drag & Drop -->
+    <div id="screen2" class="screen">
+        <div class="header-bar">
+            <h1>חלק 1: לוח השרטוט - ארגון כוחות היבשה</h1>
+            <div class="pedagogy">המטרה: הבנת 3 מערכי העל</div>
+        </div>
+        <div class="dnd-container">
+            <div class="drop-zones">
+                <div class="drop-zone" id="zone-matmeren" ondragover="allowDrop(event)" ondrop="drop(event, 'matmeren')">
+                    <h3>מערך מתמרן</h3>
+                </div>
+                <div class="drop-zone" id="zone-siyua" ondragover="allowDrop(event)" ondrop="drop(event, 'siyua')">
+                    <h3>מערך סיוע קרבי</h3>
+                </div>
+                <div class="drop-zone" id="zone-minhala" ondragover="allowDrop(event)" ondrop="drop(event, 'minhala')">
+                    <h3>מערך סיוע מנהלתי</h3>
+                </div>
+            </div>
+            <div class="draggable-items" id="drag-source">
+                <div class="drag-item" draggable="true" ondragstart="drag(event)" id="item-hir" data-target="matmeren">🏃‍♂️<br>חי"ר</div>
+                <div class="drag-item" draggable="true" ondragstart="drag(event)" id="item-shiryon" data-target="matmeren">🪖<br>שריון</div>
+                <div class="drag-item" draggable="true" ondragstart="drag(event)" id="item-handasa" data-target="siyua">⚙️<br>הנדסה</div>
+                <div class="drag-item" draggable="true" ondragstart="drag(event)" id="item-logistica" data-target="minhala">🚚<br>לוגיסטיקה</div>
+                <div class="drag-item" draggable="true" ondragstart="drag(event)" id="item-modiin" data-target="siyua">👁️<br>מודיעין</div>
+            </div>
+            <div style="text-align: left; margin-top: 20px;">
+                <button class="btn" id="btn-next-2" style="display:none;" onclick="nextScreen(3)">המשך לחוד החנית ⬅️</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Screen 3: Top Trumps & Dilemma -->
+    <div id="screen3" class="screen">
+        <div class="header-bar">
+            <h1>חלק 2: חוד החנית - קלפי כוחות מתמרנים</h1>
+            <div class="pedagogy">המטרה: יישום עקרון החיפוי ההדדי</div>
+        </div>
+        <div class="cards-container">
+            <!-- Armor Card -->
+            <div class="card">
+                <h3>שריון</h3>
+                <div style="font-size:50px; text-align:center;">🪖</div>
+                <div class="stat"><div class="stat-label"><span>עוצמת אש</span><span>90%</span></div><div class="stat-bar"><div class="stat-fill" style="width: 90%;"></div></div></div>
+                <div class="stat"><div class="stat-label"><span>ניידות</span><span>85%</span></div><div class="stat-bar"><div class="stat-fill" style="width: 85%;"></div></div></div>
+                <div class="stat"><div class="stat-label"><span>מיגון</span><span>95%</span></div><div class="stat-bar"><div class="stat-fill" style="width: 95%;"></div></div></div>
+                <div class="stat"><div class="stat-label"><span>גמישות בשטח סבוך</span><span>30%</span></div><div class="stat-bar"><div class="stat-fill" style="width: 30%;"></div></div></div>
+            </div>
+            <!-- Infantry Card -->
+            <div class="card">
+                <h3>חי"ר</h3>
+                <div style="font-size:50px; text-align:center;">🏃‍♂️</div>
+                <div class="stat"><div class="stat-label"><span>עוצמת אש</span><span>40%</span></div><div class="stat-bar"><div class="stat-fill" style="width: 40%;"></div></div></div>
+                <div class="stat"><div class="stat-label"><span>חשאיות</span><span>90%</span></div><div class="stat-bar"><div class="stat-fill" style="width: 90%;"></div></div></div>
+                <div class="stat"><div class="stat-label"><span>מיגון</span><span>20%</span></div><div class="stat-bar"><div class="stat-fill" style="width: 20%;"></div></div></div>
+                <div class="stat"><div class="stat-label"><span>גמישות בשטח סבוך</span><span>95%</span></div><div class="stat-bar"><div class="stat-fill" style="width: 95%;"></div></div></div>
+            </div>
+        </div>
+        <div class="dilemma-box">
+            <h3>דילמת המפקד: התאמת הכוח לתוואי השטח</h3>
+            <p>היעד ממוקם בתוך שטח הררי וסבוך. יש חשש לאיומי נ"ט מטווח קרוב. את מי תשלח להוביל?</p>
+            <div class="dilemma-options">
+                <button class="btn" onclick="checkDilemma('armor')">שלח שריון להוביל</button>
+                <button class="btn" onclick="checkDilemma('infantry')">שלח חי"ר להוביל</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Screen 4: Dashboard -->
+    <div id="screen4" class="screen">
+        <div class="header-bar">
+            <h1>חלק 3: המכפילים - מסך מגע אופרטיבי</h1>
+            <div class="pedagogy">המטרה: הפעלת סיוע קרבי בזמן אמת</div>
+        </div>
+        <div class="dashboard-container">
+            <div class="side-menu">
+                <button class="dash-btn" onclick="checkDash('הנדסה')">⚙️ הנדסה</button>
+                <button class="dash-btn" onclick="checkDash('אש')">🔥 אש</button>
+                <button class="dash-btn" onclick="checkDash('מודיעין')">👁️ מודיעין</button>
+            </div>
+            <div id="map-event-box" class="map-event">
+                <h2 id="event-title" style="color: #e74c3c;">⚠️ עצור! שדה מוקשים עמוק מולך</h2>
+                <p>איזה מערך סיוע קרבי תפעיל כדי לפרוץ את המכשול?</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Screen 5: Friction -->
+    <div id="screen5" class="screen">
+        <div class="header-bar">
+            <h1>חלק 5: אזור החיכוך - משחק תפקידים</h1>
+            <div class="pedagogy">המטרה: התמודדות עם גורמים בינלאומיים ואזרחיים</div>
+        </div>
+        <div class="friction-container">
+            <div class="friction-img">
+                <img src="un-soldier.png" alt="UN Soldier">
+            </div>
+            <div class="friction-panel" id="friction-panel">
+                <h2 style="color: var(--army-dark);">דילמה #1: כוחות שמירת שלום</h2>
+                <p style="font-size: 18px;">רכב של פקחי או"ם (UNTSO) דורש לעבור במחסום בתוך גזרת הלחימה שלך. כיצד תפעל?</p>
+                <button class="btn" style="background:#e74c3c;" onclick="showFeedback(`טעות! ישנה רגישות גבוהה במישור הבינלאומי. יש לאפשר להם חופש תנועה למעט צורך מבצעי חיוני המונע זאת.`)">לעכב אותו ללא הגבלת זמן</button>
+                <button class="btn" style="background:#27ae60;" onclick="nextFriction()">לאפשר חופש תנועה (בהעדר מניעה מבצעית)</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Screen 6: Finish -->
+    <div id="screen6" class="screen">
+        <div style="text-align:center; padding: 100px;">
+            <h1 style="color: var(--army-green); font-size: 50px;">משימה הושלמה בהצלחה!</h1>
+            <p style="font-size: 24px;">הטמעת את עקרונות הסינרגיה, הפעלת נכון את צוות הקרב המשולב והמשותף, והתמודדת בהצלחה עם אזור החיכוך.</p>
+            <button class="btn" style="margin-top: 40px;" onclick="location.reload()">התחל מהתחלה</button>
+        </div>
+    </div>
+
+    <!-- Global Feedback Overlay -->
+    <div id="feedback-overlay" class="feedback-overlay">
+        <div class="feedback-box">
+            <h2 id="feedback-title">תוצאה</h2>
+            <p id="feedback-text" style="font-size: 18px; margin: 20px 0;"></p>
+            <button class="btn" id="feedback-btn" onclick="closeFeedback()">המשך</button>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    /* --- Navigation --- */
+    function nextScreen(id) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById('screen' + id).classList.add('active');
+        
+        if(id === 4) {
+            setTimeout(() => { document.getElementById('map-event-box').style.display = 'block'; }, 1000);
+        }
+    }
+
+    /* --- Feedback Overlay --- */
+    let feedbackCallback = null;
+    function showFeedback(text, title="הודעת מערכת", callback=null) {
+        document.getElementById('feedback-title').innerText = title;
+        document.getElementById('feedback-text').innerHTML = text;
+        document.getElementById('feedback-overlay').style.display = 'flex';
+        feedbackCallback = callback;
+    }
+    
+    function closeFeedback() {
+        document.getElementById('feedback-overlay').style.display = 'none';
+        if(feedbackCallback) feedbackCallback();
+    }
+
+    /* --- Part 1: Drag and Drop --- */
+    let correctDrops = 0;
+    function allowDrop(ev) { ev.preventDefault(); }
+    function drag(ev) { ev.dataTransfer.setData("text", ev.target.id); }
+    function drop(ev, zoneId) {
+        ev.preventDefault();
+        var data = ev.dataTransfer.getData("text");
+        var el = document.getElementById(data);
+        if (el && el.getAttribute('data-target') === zoneId) {
+            ev.currentTarget.appendChild(el);
+            el.classList.add('correct');
+            el.setAttribute('draggable', 'false');
+            correctDrops++;
+            if (correctDrops === 5) {
+                document.getElementById('btn-next-2').style.display = 'inline-block';
+                showFeedback(`מצוין! שיבצת את כל הכוחות למערכי העל הנכונים. הבסיס לקרב המשולב מתחיל בארגון נכון.`, `לוח השרטוט הושלם`);
+            }
+        } else if (el) {
+            showFeedback(`טעות בשיוך. זכור: הנדסה ומודיעין הם סיוע קרבי, לוגיסטיקה היא סיוע מנהלתי, וחי"ר/שריון הם מסתערים.`, `שיוך שגוי`);
+        }
+    }
+
+    /* --- Part 2: Dilemma --- */
+    function checkDilemma(choice) {
+        if(choice === 'infantry') {
+            showFeedback(`<strong>בחירה מצוינת! שלחת חי"ר.</strong><br><br>לשטח סבוך יש עדיפות לחי"ר. זכור: שריון לבד פגיע מנ"ט בטווח קרוב. הוא תמיד יצטרך חי"ר לאבטחה - זהו עקרון החיפוי ההדדי!`, `סינרגיה הושגה`, () => nextScreen(4));
+        } else {
+            showFeedback(`<strong>טעות דוקטרינרית.</strong><br><br>טנק הוא עוצמתי, אך מוגבל מאוד בשטח סגור/הררי ופגיע למארבי נ"ט. עליך להוביל עם כוחות חי"ר שילוו ויאבטחו את השריון.`, `סכנה לכוח!`);
+        }
+    }
+
+    /* --- Part 3: Dashboard --- */
+    let dashStage = 1;
+    function checkDash(choice) {
+        if (dashStage === 1 && choice === 'הנדסה') {
+            showFeedback(`מעולה! כוחות ההנדסה (צמ"ה/יהל"ם) יפרצו את המכשול ויאפשרו לתמרון להמשיך.`, `מכשול נפרץ`, () => {
+                document.getElementById('event-title').innerHTML = `🎯 זיהוי אויב בטווח 10 ק"מ`;
+                document.getElementById('event-title').style.color = "#f39c12";
+                document.querySelector('#map-event-box p').innerText = `כוחותיך אינם מגיעים לטווח הזה. מי יטפל במטרה?`;
+                dashStage = 2;
+            });
+        } else if (dashStage === 2 && choice === 'אש') {
+            showFeedback(`מדויק! הפעלת סיוע אש (ארטילריה/אוויר) לסגירת מעגל והשמדת מטרה בעומק.`, `מטרה הושמדה`, () => {
+                nextScreen(5);
+            });
+        } else {
+            showFeedback(`חיל לא מתאים למשימה הנוכחית. נסה שוב.`, `הפעלת כוח שגויה`);
+        }
+    }
+
+    /* --- Part 5: Friction --- */
+    let frictionStage = 1;
+    function nextFriction() {
+        if(frictionStage === 1) {
+            showFeedback(`מצוין. יש לאפשר לכוחות האו"ם חופש תנועה (למעט צורך מבצעי חיוני המונע זאת).`, `החלטה נכונה`, () => {
+                // Change to Journalist
+                document.querySelector('.friction-img img').src = "journalist.png";
+                let panel = document.getElementById('friction-panel');
+                panel.innerHTML = `
+                    <h2 style="color: var(--army-dark);">דילמה #2: תקשורת זרה</h2>
+                    <p style="font-size: 18px;">צוות צילום זר מתעד את הכוחות שלך בשטח הלחימה.</p>
+                    <button class="btn" style="background:#e74c3c; margin-bottom:10px;" onclick="showFeedback('טעות! אין לנקוט באלימות. הצבא פועל מתוך הנחה שהוא באזור רווי תקשורת.')">גירוש אלים ומידיי</button>
+                    <button class="btn" style="background:#27ae60;" onclick="nextFriction()">תיאום מול דובר צה"ל (פעולה מוכוונת תקשורת)</button>
+                `;
+                frictionStage = 2;
+            });
+        } else if (frictionStage === 2) {
+             showFeedback(`החלטה נכונה! התקשורת יכולה לשמש כנשק תעמולתי. יש לתאם מול דו"ץ ולשמור על משמעת.`, `שמירת לגיטימציה`, () => {
+                 nextScreen(6);
+             });
+        }
+    }
+</script>
+</body>
+</html>
